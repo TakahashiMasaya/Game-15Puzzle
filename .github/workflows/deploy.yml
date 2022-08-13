@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-node@v2
       - run: yarn install && yarn build
       - name: Run lint and prettier
-        run: yarn lint-fix
+        run: yarn lint
       - name: yarn test
         run: yarn test
       - name: ssh key generate
