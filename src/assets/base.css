@@ -74,3 +74,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
 }
+
+body * {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
