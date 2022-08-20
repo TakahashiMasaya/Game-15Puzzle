@@ -1,14 +1,25 @@
 <template>
+  <game-clear-vue
+    v-if="isComplete()"
+    :moves="20"
+    :time="'15:00'"
+    :ranking="getRanking()"
+    :retry="reset"
+  ></game-clear-vue>
   <div
+    v-else
     class="frame"
     @touchmove="moveParts"
     @touchend="moveEnd"
     @mousemove.stop="moveParts"
     @mouseup.stop="moveEnd"
   >
+    <div class="frame__status">
+      time: {{ getStatus().time }} / moves: {{ getStatus().moves }}
+    </div>
     <div class="frame__inner">
       <div
-        v-for="(parts, i) in partsList"
+        v-for="(parts, i) in getPartsList()"
         draggable="false"
         :class="setStyleParts(parts)"
         :key="`parts_${i}`"
@@ -25,11 +36,38 @@
         {{ parts && parts.number }}
       </div>
     </div>
+    <button @click="reset">RESET</button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, type Ref } from "vue";
+import GameClearVue from "./GameClear.vue";
+import { useRanking } from "@/composables/ranking";
+import { onBeforeUnmount, onMounted, ref, watch, type Ref } from "vue";
+import { useParts } from "@/composables/parts";
+const {
+  getPartsList,
+  shuffleParts,
+  isComplete,
+  changePartsStatusToMove,
+  getSelectedParts,
+  setSelectedParts: useToSetSelectedParts,
+  hasSelectedParts,
+  changePartsToEmpty,
+  statusClearAll,
+  activeParts,
+  moveParts: useToMoveParts,
+} = useParts();
+
+const {
+  startTimer,
+  stopTimer,
+  getStatus,
+  resetStatus,
+  addMoveCount,
+  insertRanking,
+  getRanking,
+} = useRanking();
 
 type Parts = {
   number: number;
@@ -38,74 +76,10 @@ type Parts = {
   action: string | null;
 };
 
-type PartsList = Array<Parts | null>;
-
-const partsList: Ref<PartsList> = ref([
-  { number: 1, ableToMove: null, selected: false, action: null },
-  { number: 2, ableToMove: null, selected: false, action: null },
-  { number: 3, ableToMove: null, selected: false, action: null },
-  { number: 4, ableToMove: null, selected: false, action: null },
-  { number: 5, ableToMove: null, selected: false, action: null },
-  { number: 6, ableToMove: null, selected: false, action: null },
-  { number: 7, ableToMove: null, selected: false, action: null },
-  { number: 8, ableToMove: null, selected: false, action: null },
-  { number: 9, ableToMove: null, selected: false, action: null },
-  { number: 10, ableToMove: null, selected: false, action: null },
-  { number: 11, ableToMove: null, selected: false, action: null },
-  { number: 12, ableToMove: null, selected: false, action: null },
-  { number: 13, ableToMove: null, selected: false, action: null },
-  { number: 14, ableToMove: null, selected: false, action: null },
-  { number: 15, ableToMove: null, selected: false, action: null },
-  null,
-]);
-
-const setAbleToMove = () => {
-  // 上下左右に空きがあるか確認
-  partsList.value = partsList.value.reduce<PartsList>((ar, cu, ci, array) => {
-    if (cu === null) {
-      return [...ar, cu];
-    }
-    const checked = {
-      top: array[ci - 4],
-      left: array[ci - 1] && ci % 4 !== 0,
-      right: array[ci + 1] && ci % 4 !== 3,
-      down: array[ci + 4],
-    };
-    const ableToMove = Object.keys(checked).find(
-      (c) =>
-        (c === "top" || c === "left" || c === "right" || c === "down") &&
-        checked[c] === null
-    );
-    if (ableToMove) {
-      return [
-        ...ar,
-        {
-          ...cu,
-          ableToMove,
-        },
-      ];
-    }
-    return [...ar, cu];
-  }, []);
-};
-
 const selectedParts = ref<{
   x: number;
   y: number;
 } | null>(null);
-
-const arrayShuffle = (array: PartsList) => {
-  for (let i = array.length - 1; 0 < i; i--) {
-    // 0〜(i+1)の範囲で値を取得
-    const r = Math.floor(Math.random() * (i + 1));
-
-    // 要素の並び替えを実行
-    const tmp = array[i];
-    array[i] = array[r];
-    array[r] = tmp;
-  }
-  return array;
-};
 
 const setStyleParts = (parts: Parts | null) => {
   if (parts === null) {
@@ -126,6 +100,12 @@ const setSelectedParts = (e: Event) => {
     y: getPageY(e),
   };
 };
+
+watch(isComplete, () => {
+  if (isComplete() === true) {
+    insertRanking(getStatus());
+  }
+});
 
 const getPageX = (e: Event) =>
   window.ontouchstart === null
@@ -167,46 +147,68 @@ const overOffsetDown = (e: Event) => {
   return Math.trunc(getPageY(e) - selectedParts.value.y) > 10;
 };
 
-const hasSelectedParts = () =>
-  partsList.value.some((parts) => parts !== null && parts.selected);
-
 const isEmpty = (e: Event) =>
   Array.from((e.currentTarget as HTMLDivElement)?.classList).includes("empty");
 
-const isPartsDivElement = (parts: any): parts is HTMLDivElement =>
+const isPartsDivElement = (parts: unknown): parts is HTMLDivElement =>
   parts instanceof HTMLDivElement;
 
-const getSelectedPartsMove = () =>
-  partsList.value.find(
-    (parts) => parts !== null && parts.selected && parts.ableToMove !== null
-  ) || null;
+const reset = () => {
+  shuffleParts();
+  changePartsStatusToMove();
+  resetStatus();
+  stopTimer();
+  startTimer();
+};
 
 onMounted(() => {
-  partsList.value = arrayShuffle(partsList.value);
-  setAbleToMove();
+  // パーツをシャッフルし、移動できるパーツを設定する
+  shuffleParts();
+  changePartsStatusToMove();
+  startTimer();
+  document.addEventListener("keyup", keyup);
 });
+
+onBeforeUnmount(() => {
+  document.removeEventListener("keyup", keyup);
+});
+
+const keyup = (e: KeyboardEvent) => {
+  switch (e.key) {
+    case "ArrowDown":
+      useToMoveParts("down");
+      break;
+    case "ArrowUp":
+      useToMoveParts("top");
+      break;
+    case "ArrowLeft":
+      useToMoveParts("left");
+      break;
+    case "ArrowRight":
+      useToMoveParts("right");
+      break;
+    default:
+  }
+  if (activeParts() === null) {
+    return;
+  }
+  addMoveCount();
+};
 
 const moveStart = (e: Event) => {
   if (isEmpty(e)) {
     return;
   }
   setSelectedParts(e);
-  partsList.value = partsList.value.map((parts) => {
-    if (parts === null) {
-      return parts;
-    }
-    return {
-      ...parts,
-      selected:
-        parseInt((e.currentTarget as HTMLDivElement).dataset.number || "") ===
-          parts.number && parts.ableToMove !== null,
-    };
-  });
+  useToSetSelectedParts(
+    parseInt((e.currentTarget as HTMLDivElement).dataset.number || "")
+  );
 };
+
 const moveParts = (e: Event) => {
   if (!isEmpty(e) && hasSelectedParts()) {
     // 移動表現
-    const sp = getSelectedPartsMove();
+    const sp = getSelectedParts();
     if (sp) {
       switch (sp.ableToMove) {
         case "top": {
@@ -230,54 +232,20 @@ const moveParts = (e: Event) => {
     }
   }
 };
+
 const moveEnd = () => {
   selectedParts.value = null;
   // actionがない場合はそのまま
-  const activeParts =
-    partsList.value.find((parts) => parts !== null && parts.action !== null) ||
-    null;
-  if (activeParts === null) {
-    partsList.value = partsList.value.map((parts) => {
-      if (parts === null) {
-        return parts;
-      }
-      return {
-        ...parts,
-        ableToMove: null,
-        selected: false,
-        action: null,
-      };
-    });
-    setAbleToMove();
+  const ap = activeParts();
+  if (ap === null) {
+    statusClearAll();
+    changePartsStatusToMove();
     return;
   }
   // actionがあれば、nullと入れ替える
-  partsList.value = partsList.value.reduce<PartsList>((ar, cu) => {
-    if (cu === activeParts) {
-      return [...ar, null];
-    }
-    if (cu === null) {
-      return [
-        ...ar,
-        {
-          ...activeParts,
-          ableToMove: null,
-          selected: false,
-          action: null,
-        },
-      ];
-    }
-    return [
-      ...ar,
-      {
-        ...cu,
-        ableToMove: null,
-        selected: false,
-        action: null,
-      },
-    ];
-  }, []);
-  setAbleToMove();
+  changePartsToEmpty();
+  changePartsStatusToMove();
+  addMoveCount();
 };
 </script>
 
@@ -287,6 +255,7 @@ const moveEnd = () => {
   align-items: center;
   justify-content: center;
   height: 100%;
+  flex-direction: column;
   &__inner {
     box-shadow: 0px 0px 0px 10px rgb(255 255 255 / 50%);
     background-color: rgba(0, 0, 0, 1);
@@ -297,6 +266,7 @@ const moveEnd = () => {
     flex-wrap: wrap;
     position: relative;
     z-index: 1;
+    margin-bottom: 30px;
     .parts {
       width: 80px;
       height: 80px;
@@ -312,8 +282,8 @@ const moveEnd = () => {
       z-index: 3;
       transition: transform 0.1s;
       &.selected {
-        border: 3px solid rgba(255, 100, 100, 1);
-        background-color: rgba(100, 100, 100, 1);
+        border: 3px solid rgb(100 175 255);
+        background-color: rgb(45 80 239);
       }
       &.empty {
         cursor: default;
@@ -334,6 +304,26 @@ const moveEnd = () => {
         transform: translate(0px, 80px);
       }
     }
+  }
+  &__status {
+    border: 3px solid var(--vt-c-text-dark-2);
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+    width: 340px;
+    border-radius: 5px;
+    padding: 5px 10px;
+    text-align: center;
+    overflow: hidden;
+  }
+  button {
+    display: inline-block;
+    border: 3px solid var(--vt-c-text-dark-2);
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--vt-c-text-dark-2);
+    padding: 20px;
+    border-radius: 5px;
+    font-size: 2rem;
+    cursor: pointer;
   }
 }
 </style>
