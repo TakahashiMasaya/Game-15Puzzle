@@ -5,6 +5,7 @@
     "dev": "vite",
     "build": "run-p type-check build-only",
     "preview": "vite preview --port 4173",
+    "test": "jest --coverage",
     "test:unit": "vitest --environment jsdom",
     "build-only": "vite build --base=/15puzzle/",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
@@ -15,22 +16,29 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",
+    "@types/jest": "^28.1.7",
     "@types/jsdom": "^20.0.0",
     "@types/node": "^18.7.1",
     "@vitejs/plugin-vue": "^3.0.1",
+    "@vue/cli-plugin-unit-jest": "^5.0.8",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^11.0.0",
     "@vue/test-utils": "^2.0.2",
     "@vue/tsconfig": "^0.1.3",
+    "dayjs": "^1.11.5",
     "eslint": "^8.5.0",
     "eslint-plugin-vue": "^9.0.0",
+    "jest": "^28.1.3",
     "jsdom": "^20.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
     "sass": "^1.54.4",
+    "ts-jest": "^28.0.8",
     "typescript": "~4.7.4",
     "vite": "^3.0.1",
     "vitest": "^0.21.1",
+    "vue-jest": "^3.0.7",
     "vue-tsc": "^0.40.1"
-  }
+  },
+  "packageManager": "yarn@3.2.2"
 }
