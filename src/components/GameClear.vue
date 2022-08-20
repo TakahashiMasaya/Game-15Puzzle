@@ -2,7 +2,7 @@
   <div class="game-clear">
     <div class="text-frame">
       <div class="text-frame__result">
-        <p class="header">Congratulation!!</p>
+        <p class="header">Congratulations!!</p>
         <p class="result">Time:{{ props.time }}<br />Moves:{{ props.moves }}</p>
       </div>
       <div class="text-frame__ranking">
