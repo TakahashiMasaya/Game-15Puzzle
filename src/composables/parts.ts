@@ -65,7 +65,7 @@ export const useParts = () => {
   const shuffleParts = () => {
     init();
     changePartsStatusToMove();
-    // moveできるパーツを取得する
+    // 目的の状態から、パーツ移動を繰り返して混ぜた状態にする
     for (let i = 0; i < 300; i += 1) {
       const canMoveDirections = partsList.value.reduce<Array<AbleToMove>>(
         (ar, cu) => {
@@ -77,9 +77,10 @@ export const useParts = () => {
         },
         []
       );
-      const handleMove =
+      // 移動可能なパーツをランダムで採取し、移動させる
+      const handleMoveParts =
         canMoveDirections[Math.trunc(Math.random() * canMoveDirections.length)];
-      moveParts(handleMove);
+      moveParts(handleMoveParts);
       changePartsToEmpty();
       changePartsStatusToMove();
     }
