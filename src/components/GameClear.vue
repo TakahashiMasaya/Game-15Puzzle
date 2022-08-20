@@ -3,7 +3,7 @@
     <div class="text-frame">
       <div class="text-frame__result">
         <p class="header">Congratulation!!</p>
-        <p class="result">time:{{ props.time }} moves:{{ props.moves }}</p>
+        <p class="result">Time:{{ props.time }}<br />Moves:{{ props.moves }}</p>
       </div>
       <div class="text-frame__ranking">
         <p class="text-frame__ranking__header">Ranking</p>
@@ -11,15 +11,15 @@
           <thead>
             <tr>
               <th>rank</th>
-              <th>time</th>
-              <th>moves</th>
+              <th>Moves</th>
+              <th>Time</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(rank, i) in ranking" :key="`rank_${i}`">
               <td>{{ i + 1 }}</td>
-              <td>{{ rank.time }}</td>
               <td>{{ rank.moves }}</td>
+              <td>{{ rank.time }}</td>
             </tr>
           </tbody>
         </table>
@@ -199,15 +199,27 @@ const props = defineProps<Props>();
     flex-wrap: wrap;
     color: rgba(255, 255, 255, 0.8);
     text-align: center;
-    .header {
-      font-size: 4rem;
-      font-weight: bold;
-    }
     &__result {
-      font-size: 2rem;
+      font-size: 1.5rem;
       margin-bottom: 10px;
+      width: 100%;
+      word-break: break-all;
+      line-height: 4rem;
+      .header {
+        font-size: 4rem;
+        font-weight: bold;
+      }
+      .result {
+        line-height: 2.2rem;
+      }
     }
     &__ranking {
+      border: 2px solid var(--vt-c-white-soft);
+      box-shadow: 0 0 10px hsl(0deg 0% 100% / 50%);
+      background-color: var(--vt-c-text-light-1);
+      backdrop-filter: blur(5px);
+      border-radius: 5px;
+      padding: 10px 20px;
       &__header {
         font-size: 1.3rem;
         font-weight: bold;
@@ -215,18 +227,23 @@ const props = defineProps<Props>();
       font-size: 1.2rem;
       margin-bottom: 20px;
       table {
-        td,
+        border-collapse: collapse;
         th {
+          border-bottom: 3px solid var(--vt-c-text-dark-2);
+          padding: 2px 10px;
+        }
+        td {
+          border-bottom: 1px solid var(--vt-c-text-dark-2);
           padding: 2px 10px;
         }
       }
     }
     button {
       display: inline-block;
-      border: 1px solid var(--vt-c-text-dark-2);
+      border: 3px solid var(--vt-c-text-dark-2);
       background-color: rgba(255, 255, 255, 0.2);
       color: var(--vt-c-text-dark-2);
-      padding: 20px;
+      padding: 10px 20px;
       border-radius: 5px;
       font-size: 2rem;
       cursor: pointer;

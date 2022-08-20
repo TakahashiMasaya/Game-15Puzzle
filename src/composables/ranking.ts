@@ -45,7 +45,7 @@ export const useRanking = () => {
    *
    * @return {*}
    */
-  const getRanking = (): Array<Ranking> => getLocalStorage();
+  const getRanking = (): Array<Ranking> => getLocalStorage().splice(0, 5);
 
   const insertRanking = (rank: Ranking) => {
     const ranking = getLocalStorage();
@@ -67,7 +67,7 @@ export const useRanking = () => {
       }
       return 0;
     });
-    setLocalStorage(edittedRanking);
+    setLocalStorage(edittedRanking.splice(0, 5));
   };
 
   const setLocalStorage = (ranking: Array<Ranking>) => {

@@ -1,42 +1,56 @@
 <template>
-  <game-clear-vue
-    v-if="isComplete()"
-    :moves="20"
-    :time="'15:00'"
-    :ranking="getRanking()"
-    :retry="reset"
-  ></game-clear-vue>
-  <div
-    v-else
-    class="frame"
-    @touchmove="moveParts"
-    @touchend="moveEnd"
-    @mousemove.stop="moveParts"
-    @mouseup.stop="moveEnd"
-  >
-    <div class="frame__status">
-      time: {{ getStatus().time }} / moves: {{ getStatus().moves }}
-    </div>
-    <div class="frame__inner">
-      <div
-        v-for="(parts, i) in getPartsList()"
-        draggable="false"
-        :class="setStyleParts(parts)"
-        :key="`parts_${i}`"
-        :data-able-to-move="parts && parts.ableToMove"
-        :data-number="parts && parts.number"
-        @touchstart.stop="moveStart"
-        @touchmove="moveParts"
-        @touchend="moveEnd"
-        @mousedown.stop="moveStart"
-        @mousemove.stop="moveParts"
-        @mouseup.stop="moveEnd"
-        :ref="parts === null ? 'empty' : ''"
-      >
-        {{ parts && parts.number }}
+  <game-start
+    v-if="gameStatusPlaying === false"
+    :start="
+      () => {
+        gameStatusPlaying = true;
+        // パーツをシャッフルし、移動できるパーツを設定する
+        shuffleParts();
+        changePartsStatusToMove();
+        startTimer();
+      }
+    "
+  ></game-start>
+  <div v-else class="playing">
+    <game-clear-vue
+      v-if="isComplete()"
+      :moves="getStatus().moves"
+      :time="getStatus().time"
+      :ranking="getRanking()"
+      :retry="reset"
+    ></game-clear-vue>
+    <div
+      v-else
+      class="frame"
+      @touchmove="moveParts"
+      @touchend="moveEnd"
+      @mousemove.stop="moveParts"
+      @mouseup.stop="moveEnd"
+    >
+      <div class="frame__status">
+        Time: {{ getStatus().time }} / Moves: {{ getStatus().moves }}
       </div>
+      <div class="frame__inner">
+        <div
+          v-for="(parts, i) in getPartsList()"
+          draggable="false"
+          :class="setStyleParts(parts)"
+          :key="`parts_${i}`"
+          :data-able-to-move="parts && parts.ableToMove"
+          :data-number="parts && parts.number"
+          @touchstart.stop="moveStart"
+          @touchmove="moveParts"
+          @touchend="moveEnd"
+          @mousedown.stop="moveStart"
+          @mousemove.stop="moveParts"
+          @mouseup.stop="moveEnd"
+          :ref="parts === null ? 'empty' : ''"
+        >
+          {{ parts && parts.number }}
+        </div>
+      </div>
+      <button @click="reset">RESET</button>
     </div>
-    <button @click="reset">RESET</button>
   </div>
 </template>
 
@@ -45,6 +59,7 @@ import GameClearVue from "./GameClear.vue";
 import { useRanking } from "@/composables/ranking";
 import { onBeforeUnmount, onMounted, ref, watch, type Ref } from "vue";
 import { useParts } from "@/composables/parts";
+import GameStart from "./GameStart.vue";
 const {
   getPartsList,
   shuffleParts,
@@ -76,6 +91,8 @@ type Parts = {
   action: string | null;
 };
 
+const gameStatusPlaying = ref<boolean>(false);
+
 const selectedParts = ref<{
   x: number;
   y: number;
@@ -103,6 +120,7 @@ const setSelectedParts = (e: Event) => {
 
 watch(isComplete, () => {
   if (isComplete() === true) {
+    stopTimer();
     insertRanking(getStatus());
   }
 });
@@ -162,10 +180,6 @@ const reset = () => {
 };
 
 onMounted(() => {
-  // パーツをシャッフルし、移動できるパーツを設定する
-  shuffleParts();
-  changePartsStatusToMove();
-  startTimer();
   document.addEventListener("keyup", keyup);
 });
 
@@ -250,6 +264,10 @@ const moveEnd = () => {
 </script>
 
 <style lang="scss" scoped>
+.playing {
+  width: 100%;
+  height: 100%;
+}
 .frame {
   display: flex;
   align-items: center;

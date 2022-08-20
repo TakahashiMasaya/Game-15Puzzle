@@ -63,17 +63,38 @@ export const useParts = () => {
    *
    */
   const shuffleParts = () => {
-    const array = partsList.value;
-    for (let i = array.length - 1; 0 < i; i--) {
-      // 0〜(i+1)の範囲で値を取得
-      const r = Math.floor(Math.random() * (i + 1));
-
-      // 要素の並び替えを実行
-      const tmp = array[i];
-      array[i] = array[r];
-      array[r] = tmp;
+    init();
+    changePartsStatusToMove();
+    // moveできるパーツを取得する
+    for (let i = 0; i < 300; i += 1) {
+      const canMoveDirections = partsList.value.reduce<Array<AbleToMove>>(
+        (ar, cu) => {
+          const ableToMove = cu?.ableToMove;
+          if (!ableToMove) {
+            return ar;
+          }
+          return [...ar, ableToMove];
+        },
+        []
+      );
+      const handleMove =
+        canMoveDirections[Math.trunc(Math.random() * canMoveDirections.length)];
+      moveParts(handleMove);
+      changePartsToEmpty();
+      changePartsStatusToMove();
     }
-    partsList.value = array;
+    // console.log(partsList.value);
+    // const array = partsList.value;
+    // for (let i = array.length - 1; 0 < i; i--) {
+    //   // 0〜(i+1)の範囲で値を取得
+    //   const r = Math.floor(Math.random() * (i + 1));
+
+    //   // 要素の並び替えを実行
+    //   const tmp = array[i];
+    //   array[i] = array[r];
+    //   array[r] = tmp;
+    // }
+    // partsList.value = array;
   };
 
   /**
