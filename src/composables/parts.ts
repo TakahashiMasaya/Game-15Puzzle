@@ -1,10 +1,10 @@
-import { readonly, ref, type Ref } from "vue";
+import { readonly, ref, type Ref } from 'vue';
 
-type handleParts = "left" | "right" | "top" | "down";
+type handleParts = 'left' | 'right' | 'top' | 'down';
 
-type AbleToMove = "left" | "right" | "top" | "down";
+type AbleToMove = 'left' | 'right' | 'top' | 'down';
 
-type MoveAction = "move-top" | "move-down" | "move-left" | "move-right" | null;
+type MoveAction = 'move-top' | 'move-down' | 'move-left' | 'move-right' | null;
 
 type Parts = {
   number: number;
@@ -118,14 +118,14 @@ export const useParts = () => {
       }
       // 上下左右のパーツの取得する
       const checked: {
-        top: Parts | "wall" | null;
-        left: Parts | "wall" | null;
-        right: Parts | "wall" | null;
-        down: Parts | "wall" | null;
+        top: Parts | 'wall' | null;
+        left: Parts | 'wall' | null;
+        right: Parts | 'wall' | null;
+        down: Parts | 'wall' | null;
       } = {
         top: array[ci - 4],
-        left: ci % 4 !== 0 ? array[ci - 1] : "wall",
-        right: ci % 4 !== 3 ? array[ci + 1] : "wall",
+        left: ci % 4 !== 0 ? array[ci - 1] : 'wall',
+        right: ci % 4 !== 3 ? array[ci + 1] : 'wall',
         down: array[ci + 4],
       };
       const ableToMove = (<Array<AbleToMove>>(

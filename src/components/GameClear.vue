@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Ranking } from "@/composables/ranking";
+import type { Ranking } from '@/composables/ranking';
 
 type Props = {
   moves: number;
@@ -52,7 +52,7 @@ const props = defineProps<Props>();
 
 <style lang="scss" scoped>
 @mixin createFramework($leftPosition) {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: $leftPosition;

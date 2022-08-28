@@ -55,11 +55,11 @@
 </template>
 
 <script setup lang="ts">
-import GameClearVue from "./GameClear.vue";
-import { useRanking } from "@/composables/ranking";
-import { onBeforeUnmount, onMounted, ref, watch, type Ref } from "vue";
-import { useParts } from "@/composables/parts";
-import GameStart from "./GameStart.vue";
+import GameClearVue from './GameClear.vue';
+import { useRanking } from '@/composables/ranking';
+import { onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue';
+import { useParts } from '@/composables/parts';
+import GameStart from './GameStart.vue';
 const {
   getPartsList,
   shuffleParts,
@@ -100,12 +100,12 @@ const selectedParts = ref<{
 
 const setStyleParts = (parts: Parts | null) => {
   if (parts === null) {
-    return "parts empty";
+    return 'parts empty';
   }
   if (parts.selected) {
-    return `parts selected ${parts.action ? parts.action : ""}`;
+    return `parts selected ${parts.action ? parts.action : ''}`;
   }
-  return "parts";
+  return 'parts';
 };
 
 const setSelectedParts = (e: Event) => {
@@ -166,7 +166,7 @@ const overOffsetDown = (e: Event) => {
 };
 
 const isEmpty = (e: Event) =>
-  Array.from((e.currentTarget as HTMLDivElement)?.classList).includes("empty");
+  Array.from((e.currentTarget as HTMLDivElement)?.classList).includes('empty');
 
 const isPartsDivElement = (parts: unknown): parts is HTMLDivElement =>
   parts instanceof HTMLDivElement;
@@ -180,26 +180,26 @@ const reset = () => {
 };
 
 onMounted(() => {
-  document.addEventListener("keyup", keyup);
+  document.addEventListener('keyup', keyup);
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener("keyup", keyup);
+  document.removeEventListener('keyup', keyup);
 });
 
 const keyup = (e: KeyboardEvent) => {
   switch (e.key) {
-    case "ArrowDown":
-      useToMoveParts("down");
+    case 'ArrowDown':
+      useToMoveParts('down');
       break;
-    case "ArrowUp":
-      useToMoveParts("top");
+    case 'ArrowUp':
+      useToMoveParts('top');
       break;
-    case "ArrowLeft":
-      useToMoveParts("left");
+    case 'ArrowLeft':
+      useToMoveParts('left');
       break;
-    case "ArrowRight":
-      useToMoveParts("right");
+    case 'ArrowRight':
+      useToMoveParts('right');
       break;
     default:
   }
@@ -215,7 +215,7 @@ const moveStart = (e: Event) => {
   }
   setSelectedParts(e);
   useToSetSelectedParts(
-    parseInt((e.currentTarget as HTMLDivElement).dataset.number || "")
+    parseInt((e.currentTarget as HTMLDivElement).dataset.number || '')
   );
 };
 
@@ -225,20 +225,20 @@ const moveParts = (e: Event) => {
     const sp = getSelectedParts();
     if (sp) {
       switch (sp.ableToMove) {
-        case "top": {
-          sp.action = overOffsetTop(e) ? "move-top" : null;
+        case 'top': {
+          sp.action = overOffsetTop(e) ? 'move-top' : null;
           break;
         }
-        case "down": {
-          sp.action = overOffsetDown(e) ? "move-down" : null;
+        case 'down': {
+          sp.action = overOffsetDown(e) ? 'move-down' : null;
           break;
         }
-        case "left": {
-          sp.action = overOffsetLeft(e) ? "move-left" : null;
+        case 'left': {
+          sp.action = overOffsetLeft(e) ? 'move-left' : null;
           break;
         }
-        case "right": {
-          sp.action = overOffsetRight(e) ? "move-right" : null;
+        case 'right': {
+          sp.action = overOffsetRight(e) ? 'move-right' : null;
           break;
         }
         default:

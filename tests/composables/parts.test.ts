@@ -1,4 +1,4 @@
-import { useParts } from "@/composables/parts";
+import { useParts } from '@/composables/parts';
 const {
   init,
   getPartsList,
@@ -7,21 +7,21 @@ const {
   changePartsStatusToMove,
   setSelectedParts,
 } = useParts();
-describe("partsList", () => {
-  it("パーツが取得されること", () => {
+describe('partsList', () => {
+  it('パーツが取得されること', () => {
     expect(getPartsList().length).toBe(16);
   });
 
-  it("パーツが完成されてるステータスになっていること", () => {
+  it('パーツが完成されてるステータスになっていること', () => {
     expect(isComplete()).toBe(true);
   });
 
-  it("パーツが完成されてるステータスになっていないこと（パーツシャッフル後）", () => {
+  it('パーツが完成されてるステータスになっていないこと（パーツシャッフル後）', () => {
     shuffleParts();
     expect(isComplete()).toBe(false);
   });
 
-  it("パーツが動かせる設定が正しいこと（ここでは12,15）", () => {
+  it('パーツが動かせる設定が正しいこと（ここでは12,15）', () => {
     init();
     changePartsStatusToMove();
     expect(
@@ -34,16 +34,16 @@ describe("partsList", () => {
     ).toEqual([
       {
         number: 12,
-        ableToMove: "down",
+        ableToMove: 'down',
       },
       {
         number: 15,
-        ableToMove: "right",
+        ableToMove: 'right',
       },
     ]);
   });
 
-  it("指定したパーツを選択済みの状態にすること", () => {
+  it('指定したパーツを選択済みの状態にすること', () => {
     init();
     changePartsStatusToMove();
     setSelectedParts(15);

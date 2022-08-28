@@ -1,5 +1,5 @@
-import { readonly, ref } from "vue";
-import dayjs from "dayjs";
+import { readonly, ref } from 'vue';
+import dayjs from 'dayjs';
 
 export type Ranking = {
   time: string;
@@ -12,7 +12,7 @@ let startDate: dayjs.Dayjs;
 
 export const useRanking = () => {
   const status = ref<Ranking>({
-    time: "00:00",
+    time: '00:00',
     moves: 0,
   });
 
@@ -20,7 +20,7 @@ export const useRanking = () => {
 
   const resetStatus = () => {
     status.value = {
-      time: "00:00",
+      time: '00:00',
       moves: 0,
     };
   };
@@ -32,7 +32,7 @@ export const useRanking = () => {
   const startTimer = () => {
     startDate = dayjs();
     timer = window.setInterval(() => {
-      status.value.time = dayjs(dayjs().diff(startDate)).format("mm:ss");
+      status.value.time = dayjs(dayjs().diff(startDate)).format('mm:ss');
     }, 1000);
   };
 
@@ -71,11 +71,11 @@ export const useRanking = () => {
   };
 
   const setLocalStorage = (ranking: Array<Ranking>) => {
-    window.localStorage.setItem("ranking", JSON.stringify(ranking));
+    window.localStorage.setItem('ranking', JSON.stringify(ranking));
   };
 
   const getLocalStorage = (): Array<Ranking> =>
-    JSON.parse(window.localStorage.getItem("ranking") || "[]");
+    JSON.parse(window.localStorage.getItem('ranking') || '[]');
 
   return {
     status: readonly(status),
