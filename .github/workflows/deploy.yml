@@ -20,9 +20,8 @@ jobs:
       - run: yarn install && yarn build
       - name: Run lint and prettier
         run: yarn lint
-      # TODO: 一旦テストは退避
-      # - name: yarn test
-      #   run: yarn test
+      - name: yarn test
+        run: yarn test
       - name: ssh key generate
         run: echo "$SSH_PRIVATE_KEY" > key && chmod 600 key
         env:
