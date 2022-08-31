@@ -1,18 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[` snapshots 1`] = `
-<div
-  class="game-start"
->
-  <p>
-    15 Puzzle Game
-  </p>
-  <button>
-    Press Start!!
-  </button>
-</div>
-`;
-
 exports[`GameStart snapshots 1`] = `
 <div
   class="game-start"

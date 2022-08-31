@@ -5,7 +5,7 @@
     "dev": "vite",
     "build": "run-p type-check build-only",
     "preview": "vite preview --port 4173",
-    "test": "jest --coverage",
+    "test": "jest --coverage -u",
     "test:unit": "vitest --environment jsdom",
     "build-only": "vite build --base=/15puzzle/",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
