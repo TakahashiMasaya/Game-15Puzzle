@@ -28,7 +28,9 @@
       @mouseup.stop="moveEnd"
     >
       <div class="frame__status">
-        Time: {{ getStatus().time }} / Moves: {{ getStatus().moves }}
+        <p>Time: {{ getStatus().time }}</p>
+        <p>/</p>
+        <p>Moves: {{ getStatus().moves }}</p>
       </div>
       <div class="frame__inner">
         <div
@@ -342,6 +344,39 @@ const moveEnd = () => {
     border-radius: 5px;
     font-size: 2rem;
     cursor: pointer;
+  }
+}
+
+@media screen and (orientation: landscape) {
+  .frame {
+    flex-direction: row;
+    &__status {
+      margin: 0;
+      width: 10rem;
+      margin-right: 1rem;
+      p {
+        white-space: nowrap;
+        &:nth-of-type(2) {
+          display: none;
+        }
+      }
+    }
+    &__inner {
+      margin: 0;
+      margin-right: 1rem;
+    }
+  }
+}
+
+@media screen and (orientation: portrait) {
+  .frame {
+    flex-direction: column;
+    &__status {
+      p {
+        display: inline-block;
+        padding: 0.2rem;
+      }
+    }
   }
 }
 </style>
