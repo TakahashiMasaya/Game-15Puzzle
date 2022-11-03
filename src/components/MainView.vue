@@ -62,6 +62,7 @@ import { useRanking } from '@/composables/ranking';
 import { onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue';
 import { useParts } from '@/composables/parts';
 import GameStart from './GameStart.vue';
+import { GamepadDevice } from '@/composables/gamepad';
 const {
   getPartsList,
   shuffleParts,
@@ -92,6 +93,10 @@ type Parts = {
   selected: boolean;
   action: string | null;
 };
+
+const gamepadDevice = new GamepadDevice();
+
+const requestAnimationId = ref<number>(0);
 
 const gameStatusPlaying = ref<boolean>(false);
 
@@ -181,14 +186,43 @@ const reset = () => {
   startTimer();
 };
 
+const startAnimation = () => {
+  const loop = () => {
+    requestAnimationId.value = window.requestAnimationFrame(loop);
+    gamepadDevice.do();
+  };
+  requestAnimationId.value = window.requestAnimationFrame(loop);
+};
+
 onMounted(() => {
   document.addEventListener('keyup', keyup);
+  gamepadDevice.init({
+    connected: () => {
+      startAnimation();
+    },
+    disconnected: () => {
+      window.cancelAnimationFrame(requestAnimationId.value);
+    },
+    down: () => {
+      useToMoveParts('down');
+    },
+    up: () => {
+      useToMoveParts('top');
+    },
+    left: () => {
+      useToMoveParts('left');
+    },
+    right: () => {
+      useToMoveParts('right');
+    },
+  });
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener('keyup', keyup);
 });
 
+// キーボードイベント設定
 const keyup = (e: KeyboardEvent) => {
   switch (e.key) {
     case 'ArrowDown':
@@ -211,6 +245,7 @@ const keyup = (e: KeyboardEvent) => {
   addMoveCount();
 };
 
+// パーツ動かし始めのイベント
 const moveStart = (e: Event) => {
   if (isEmpty(e)) {
     return;
@@ -221,6 +256,7 @@ const moveStart = (e: Event) => {
   );
 };
 
+// パーツ動かし中のイベント
 const moveParts = (e: Event) => {
   if (!isEmpty(e) && hasSelectedParts()) {
     // 移動表現
@@ -249,6 +285,7 @@ const moveParts = (e: Event) => {
   }
 };
 
+// パーツ動かし完了イベント
 const moveEnd = () => {
   selectedParts.value = null;
   // actionがない場合はそのまま
