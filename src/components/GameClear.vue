@@ -186,7 +186,8 @@ const props = defineProps<Props>();
   z-index: 10;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
   overflow: hidden;
   .text-frame {
     width: 100%;

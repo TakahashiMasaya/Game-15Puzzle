@@ -205,15 +205,19 @@ onMounted(() => {
     },
     down: () => {
       useToMoveParts('down');
+      addMoveCount();
     },
     up: () => {
       useToMoveParts('top');
+      addMoveCount();
     },
     left: () => {
       useToMoveParts('left');
+      addMoveCount();
     },
     right: () => {
       useToMoveParts('right');
+      addMoveCount();
     },
   });
 });
