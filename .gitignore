@@ -34,3 +34,6 @@ coverage
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# for Snyk
+.dccache
