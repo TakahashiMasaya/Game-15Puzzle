@@ -25,6 +25,8 @@ jobs:
         run: yarn test
       - name: Snyk monitor
         run: snyk test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: ssh key generate
         run: echo "$SSH_PRIVATE_KEY" > key && chmod 600 key
         env:
