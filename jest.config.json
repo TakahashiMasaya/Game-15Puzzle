@@ -1,0 +1,27 @@
+{
+  "moduleNameMapper": {
+    "^@/(.+)": "<rootDir>/src/$1",
+    "^~/(.+)": "<rootDir>/tests/$1"
+  },
+  "testEnvironment": "jsdom",
+  "testEnvironmentOptions": {
+    "customExportConditions": [
+      "node",
+      "node-addons"
+    ]
+  },
+  "moduleFileExtensions": [
+    "ts",
+    "tsx",
+    "js",
+    "json",
+    "vue"
+  ],
+  "transform": {
+    "^.+\\.ts$": "@swc/jest",
+    "^.+\\.vue$": "@vue/vue3-jest"
+  },
+  "testMatch": [
+    "<rootDir>/tests/**/*.test.ts"
+  ]
+}

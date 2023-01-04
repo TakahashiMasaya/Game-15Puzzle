@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [],
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "composite": true,
+    "lib": [],
+    "types": ["jest", "node", "jsdom"],
+    "paths": {
+      "@/*": ["src/*"],
+      "~/*": ["tests/*"]
+    }
+  }
+}
